@@ -12,13 +12,9 @@ const navMenuSchema = new Schema(
         parent: {
             type: String,
             match: [/^[\p{L} -]+$/u, "Invalid menu name"],
-            unique: true,
-            required: true,
         },
     },
     { versionKey: false }
 )
-
-navMenuSchema.add({ hierarchy: [navMenuSchema] })
 
 module.exports = navMenuSchema
