@@ -1,12 +1,26 @@
 const Page = require("../db/models/page")
-const { NotFoundError, InvalidArgumentError } = require("../../errors")
+const {
+    NotFoundError,
+    InvalidArgumentError,
+    InvalidAccessError,
+} = require("../../errors")
 const forwardAsyncErrors = require("../helpers/forward-async-errors")
+const hasPermission = require("../helpers/has-permission")
 
 exports.getPageBySlug = forwardAsyncErrors(async (req, res) => {
     const page = await Page.findOne({ slug: req.params.slug })
+    const canReadDrafts = await hasPermission({
+        role: req.user.role,
+        resource: "pages",
+        action: "readDraft",
+    })
 
     if (!page) {
         throw new NotFoundError()
+    }
+
+    if (page.status === "draft" && !canReadDrafts) {
+        throw new InvalidAccessError()
     }
 
     res.send({
@@ -16,8 +30,22 @@ exports.getPageBySlug = forwardAsyncErrors(async (req, res) => {
 
 exports.getPages = forwardAsyncErrors(async (req, res) => {
     const { sort = "_id", limit, offset, ...query } = req.query
+    const canReadDrafts = await hasPermission({
+        role: req.user.role,
+        resource: "pages",
+        action: "readDraft",
+    })
 
-    const pages = await Page.find(query).skip(offset).limit(limit).sort(sort)
+    let finalQuery = query
+
+    if (!canReadDrafts) {
+        finalQuery.status = "published"
+    }
+
+    const pages = await Page.find(finalQuery)
+        .skip(offset)
+        .limit(limit)
+        .sort(sort)
 
     res.send({
         result: pages,
