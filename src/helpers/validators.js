@@ -20,11 +20,17 @@ const passwordValidator = yup
     )
     .label("Password")
 
-const roleValidator = yup.string().oneOf(["admin", "manager", "editor"])
+const roleValidator = yup
+    .string()
+    .matches(/[a-zA-Z]{3,}/)
+    .label("Role name")
 
 const pageStatusValidator = yup.string().oneOf(["draft", "published"])
 
-const slugValidator = yup.string().matches(/[a-z][a-z-]*[a-z]/)
+const slugValidator = yup
+    .string()
+    .matches(/[a-z][a-z-]*[a-z]/)
+    .label("Slug")
 
 const queryLimitValidator = yup
     .number()

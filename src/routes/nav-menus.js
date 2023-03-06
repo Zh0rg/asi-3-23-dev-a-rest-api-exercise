@@ -6,13 +6,21 @@ const validators = require("../helpers/validators")
 
 const { isAuthenticated, hasPermission } = require("../middlewares/auth")
 
-router.get("/nav-menus", navMenuCtrl.getnavMenus)
+router.get(
+    "/nav-menus",
+    validate("query", {
+        name: validators.nameValidator,
+        offset: validators.queryOffsetValidator,
+        limit: validators.queryLimitValidator,
+    }),
+    navMenuCtrl.getMenus
+)
 router.get(
     "/nav-menus/:navMenuName",
     validate("params", {
         navMenuName: validators.nameValidator,
     }),
-    navMenuCtrl.getnavMenuById
+    navMenuCtrl.getMenuByName
 )
 
 router.post(
@@ -21,7 +29,7 @@ router.post(
         isAuthenticated(false),
         hasPermission({ resource: "menus", actions: ["create"] }),
     ],
-    navMenuCtrl.createnavMenu
+    navMenuCtrl.createMenu
 )
 
 router.patch(
@@ -33,7 +41,7 @@ router.patch(
     validate("params", {
         navMenuName: validators.nameValidator,
     }),
-    navMenuCtrl.updatenavMenu
+    navMenuCtrl.updateMenu
 )
 
 router.delete(
@@ -45,7 +53,7 @@ router.delete(
     validate("params", {
         navMenuName: validators.nameValidator,
     }),
-    navMenuCtrl.deletenavMenu
+    navMenuCtrl.deleteMenu
 )
 
 module.exports = router

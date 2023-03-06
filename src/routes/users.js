@@ -30,7 +30,7 @@ router.get(
     objectIdValidator("userId"),
     [
         isAuthenticated(false),
-        hasPermission({ resource: "users", actions: ["read", "readSelf"] }),
+        hasPermission({ resource: "users", actions: ["read"] }),
     ],
     userCtrl.getUserById
 )

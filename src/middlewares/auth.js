@@ -23,7 +23,14 @@ exports.isAuthenticated = (allowPublic) =>
         const { authorization } = req.headers
 
         if (!authorization) {
-            throw new InvalidCredentialsError()
+            if (!allowPublic) {
+                throw new InvalidCredentialsError()
+            }
+
+            req.user = defaultUser
+            next()
+
+            return
         }
 
         const token = authorization.split(" ")[1]
@@ -42,7 +49,7 @@ exports.isAuthenticated = (allowPublic) =>
                 throw new InvalidSessionError()
             }
 
-            req.user = user || defaultUser
+            req.user = user
             next()
         } catch (err) {
             throw new InvalidSessionError()

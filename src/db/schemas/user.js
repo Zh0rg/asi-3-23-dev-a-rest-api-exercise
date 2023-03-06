@@ -52,7 +52,7 @@ userSchema.pre("save", async function hashPassword(next) {
 
     this.password = await bcryptjs.hash(
         this.password,
-        config.security.jwt.rounds
+        config.security.password.rounds
     )
 })
 
