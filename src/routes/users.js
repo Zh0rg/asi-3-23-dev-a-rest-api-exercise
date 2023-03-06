@@ -12,7 +12,7 @@ router.get(
     "/users",
     [
         isAuthenticated(false),
-        hasPermission({ resource: "users", actions: ["read"] }),
+        hasPermission({ resource: "users", actions: ["read", "readSelf"] }),
     ],
     validate("query", {
         sort: yup.string().oneOf(["firstName", "lastName", "role"]),
@@ -30,7 +30,7 @@ router.get(
     objectIdValidator("userId"),
     [
         isAuthenticated(false),
-        hasPermission({ resource: "users", actions: ["read"] }),
+        hasPermission({ resource: "users", actions: ["read", "readSelf"] }),
     ],
     userCtrl.getUserById
 )

@@ -18,6 +18,7 @@ const userSchema = new Schema(
                 "Password must be at least 8 chars & contain at least one of each: lower case, upper case, digit, special char.",
             ],
             required: true,
+            select: false,
         },
         firstName: {
             type: String,

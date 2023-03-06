@@ -58,12 +58,15 @@ exports.isAuthenticated = (allowPublic) =>
 
 exports.hasPermission = ({ resource, actions }) =>
     forwardAsyncErrors(async (req, res, next) => {
-        const permission = actions.reduce(
-            (result, action) =>
-                result ||
-                hasPermission({ role: req.user.role, resource, action }),
-            false
-        )
+        let permission = false
+
+        for (const action of actions) {
+            permission ||= await hasPermission({
+                role: req.user.role,
+                resource,
+                action,
+            })
+        }
 
         if (!permission) {
             throw new InvalidAccessError()
